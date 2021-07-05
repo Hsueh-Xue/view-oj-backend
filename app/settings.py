@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_apscheduler',
+    'scheduler.apps.SchedulerConfig',
     'rest_framework',
     'oj.apps.OjConfig',
     'user.apps.UserConfig'

@@ -14,26 +14,27 @@ class CodeforcesHttp(SpiderHttp):
 class CodeforcesSpider:
     codeforces_http = CodeforcesHttp()
 
-    def get_user_rating(self, oj_username):
-        url = 'http://codeforces.com/api/user.info?handles={}'.format(oj_username)
+    def get_user_rating(self, username):
+        url = 'http://codeforces.com/api/user.info?handles={}'.format(username)
         rating = 0
+        last_login = 0
         res = self.codeforces_http.get(url=url).json()
         if res['status'] == "OK":
             rating = res['result'][0]['rating']
-        return rating
+            last_login = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(res['result'][0]['lastOnlineTimeSeconds']))
+            print(last_login)
+        return rating, last_login
 
-    def get_user_info(self, oj_username, accept_problems):
-        username = oj_username.oj_username
+    def get_problem_info(self, oj_username):
+        username = oj_username
         accept_problem_list = []
         url = 'http://codeforces.com/api/user.status?handle={}'.format(username)
         res = self.codeforces_http.get(url=url)
         res = json.loads(res.text)
         if res['status'] != 'OK':
-            return {'success': False, 'data': []}
+            return []
         res = res['result']
-        success = False
         for rec in res:
-            success = True
             if rec['testset'] == 'PRETESTS':
                 continue
             if rec.get('verdict') == 'OK':
@@ -42,11 +43,9 @@ class CodeforcesSpider:
                 else:
                     problem_pid = '{}{}'.format(rec['problem']['contestId'], rec['problem']['index'])
                 accept_time = timestamp_to_str(rec['creationTimeSeconds'])
-                if accept_problems.get("codeforces-{}".format(problem_pid)) == accept_time:
-                    continue
                 accept_problem_list.append({
                     'oj': 'codeforces',
                     'problem_pid': problem_pid,
                     'accept_time': accept_time
                 })
-        return {'success': success, 'data': accept_problem_list}
+        return len(accept_problem_list)

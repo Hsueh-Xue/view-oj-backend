@@ -1,19 +1,34 @@
-from django.shortcuts import render
-
-# Create your views here.
-import time
+# # import time
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore, register_events, register_job
+from user.models import User
+from oj.models import OJUser, OJ
+from spiders.codeforces_spider import CodeforcesSpider
 
 scheduler = BackgroundScheduler()
 scheduler.add_jobstore(DjangoJobStore(), "default")
 
 
 # 时间间隔3秒钟打印一次当前的时间
-@register_job(scheduler, "interval", seconds=3, id='test_job2')
-def test_job():
-    format_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-    print(format_time)
+@register_job(scheduler, "interval", seconds=3, id='codeforces_spider')
+def codeforces():
+    print('codeforces start')
+    user_list = User.objects.filter(status=0).all()
+    oj = OJ.objects.filter(id=1, status=0).first()
+    if not oj:
+        pass
+    codeforces_spider = CodeforcesSpider()
+    for user in user_list:
+        oj_user = OJUser.objects.filter(user=user, oj=oj).first()
+        if not oj_user:
+            continue
+        rating, last_login = codeforces_spider.get_user_rating(oj_user.oj_username)
+        problem_cnt = codeforces_spider.get_problem_info(oj_user.oj_username)
+        oj_user.oj_rating = rating
+        oj_user.problem_count = problem_cnt
+        oj_user.last_login = last_login
+        oj_user.save()
+    print('codeforces finish')
 
 
 # per-execution monitoring, call register_events on your scheduler

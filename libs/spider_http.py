@@ -36,7 +36,6 @@ class SpiderHttp:
         url, data = self._before_request(url, params, data)
         res = self.sess.request(method, url=url, data=data, timeout=30)
         res = self._end_request(res, encoding)
-        print(url, res.status_code)
         return res
 
     @staticmethod
