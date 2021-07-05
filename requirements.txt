@@ -1,0 +1,13 @@
+APScheduler==3.7.0
+asgiref==3.4.1
+beautifulsoup4==4.9.3
+Django==3.2.5
+django-apscheduler==0.6.0
+djangorestframework==3.12.4
+mysqlclient==2.0.3
+pytz==2021.1
+six==1.16.0
+soupsieve==2.2.1
+sqlparse==0.4.1
+typing-extensions==3.10.0.0
+tzlocal==2.1

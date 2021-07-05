@@ -1,4 +1,4 @@
-# view-oj-for-hznu
+# view-oj
 
 view-oj for hznu acm lib
 
