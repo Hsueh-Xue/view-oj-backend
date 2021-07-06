@@ -14,16 +14,22 @@ class CodeforcesHttp(SpiderHttp):
 class CodeforcesSpider:
     codeforces_http = CodeforcesHttp()
 
+    def get_user_last_rating(self, username):
+        url = 'http://codeforces.com/api/user.rating?handle={}'.format(username)
+        res = self.codeforces_http.get(url=url).json()
+        if res["status"] != "OK":
+            return {"success": False, "last_time": 0, 'contest_cnt': 0}
+        last_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(res['result'][-1]['ratingUpdateTimeSeconds']))
+        contest_cnt = len(res['result'])
+        return {"success": True, "last_time": last_time, 'contest_cnt': contest_cnt}
+
     def get_user_rating(self, username):
         url = 'http://codeforces.com/api/user.info?handles={}'.format(username)
         rating = 0
-        last_login = 0
         res = self.codeforces_http.get(url=url).json()
         if res['status'] == "OK":
             rating = res['result'][0]['rating']
-            last_login = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(res['result'][0]['lastOnlineTimeSeconds']))
-            print(last_login)
-        return rating, last_login
+        return rating
 
     def get_problem_info(self, oj_username):
         username = oj_username
