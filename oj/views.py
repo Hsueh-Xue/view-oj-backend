@@ -10,7 +10,7 @@ scheduler.add_jobstore(DjangoJobStore(), "default")
 
 
 # 时间间隔3秒钟打印一次当前的时间
-@register_job(scheduler, "interval", seconds=600, id='codeforces_spider', replace_existing=True)
+@register_job(scheduler, "interval", seconds=2 * 60 * 60, id='codeforces_spider', replace_existing=True)
 def codeforces():
     print('codeforces start')
     user_list = User.objects.filter(status=0).all()
