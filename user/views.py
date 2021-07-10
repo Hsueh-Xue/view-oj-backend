@@ -53,7 +53,7 @@ class GetRatingView(APIView):
             for item in oj_user_list:
                 data_item = {'username': item.user.username, 'rating': item.oj_rating, 'cnt': item.problem_count,
                              'nickname': item.user.nickname, 'last_cf_date': item.last_login,
-                             'contest_cnt': item.user.contest_num, 'hanlde': item.oj_username}
+                             'contest_cnt': item.user.contest_num, 'handle': item.oj_username}
                 data.append(data_item)
 
             return Response({
